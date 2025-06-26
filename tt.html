@@ -88,14 +88,16 @@
   <div id="grid"></div>
   <div id="message"></div>
   <button id="restart" onclick="window.location.reload()">Start Again</button>
-  <audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-  <audio id="wrongSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+  <audio id="correctSound" src="https://raggles.github.io/tt/wohoo.ogg"></audio>
+  <audio id="wrongSound" src="https://raggles.github.io/tt/fart.ogg"></audio>
+  <audio id="gameOverSound" src="https://raggles.github.io/tt/gameover.ogg"></audio>
   <script>
     const grid = document.getElementById("grid");
     const status = document.getElementById("status");
     const message = document.getElementById("message");
     const correctSound = document.getElementById("correctSound");
     const wrongSound = document.getElementById("wrongSound");
+    const gameOverSound = document.getElementById("gameOverSound");
 
     let hearts = 5;
     let time = 180;
@@ -136,7 +138,7 @@
         time--;
         updateStatus();
         if (time <= 0) {
-          gameOver("Time's up!");
+          gameOver("Time's up!", false);
         }
       }, 1000);
     }
@@ -146,14 +148,16 @@
       status.textContent = `Hearts: ${heartsStr} | Time: ${remaining}s`;
     }
 
-    function gameOver(msg) {
+    function gameOver(msg, won) {
       clearInterval(timer);
       message.textContent = msg;
+      if (!won)
+        gameOverSound.play();
     }
 
     function pickNext() {
       if (triangles.every(t => t.classList.contains("correct"))) {
-        gameOver("You win!");
+        gameOver("You win!", true);
         return;
       }
       if (current) current.classList.remove("highlighted");
@@ -189,7 +193,7 @@
           wrongSound.play();
           hearts--;
           updateStatus();
-          if (hearts <= 0) gameOver("Out of hearts!");
+          if (hearts <= 0) gameOver("Out of hearts!", false);
           current.input = "";
         }
       }
